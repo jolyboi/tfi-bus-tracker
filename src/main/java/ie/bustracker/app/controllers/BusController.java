@@ -19,7 +19,7 @@ public class BusController {
 	// Get the JSON with all trips 
   	@GetMapping("/buses")
   	public List<UpcomingBus> getBuses() {
-        return realTimeService.getUpcomingBuses(); 
+        return realTimeService.getCachedBuses(); 
  	}
 }
 

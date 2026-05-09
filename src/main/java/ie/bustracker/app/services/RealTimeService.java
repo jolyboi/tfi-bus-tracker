@@ -31,6 +31,17 @@ public class RealTimeService {
     @Value("${bus-tracker.stop-id}")
     private String wantedStopId; 
 
+    private volatile List<UpcomingBus> cachedBuses = Collections.emptyList();
+
+    // Getter and Setter for cachedBuses 
+    public List<UpcomingBus> getCachedBuses() {
+        return cachedBuses;
+    }
+    
+    public void setCachedBuses(List<UpcomingBus> newCachedBuses) {
+        this.cachedBuses = newCachedBuses; 
+    }
+
     public List<UpcomingBus> getUpcomingBuses() {
         List<UpcomingBus> nextBuses = gtfs.getNextBuses();
 
