@@ -124,10 +124,3 @@ Example response:
 - **Spring Boot docs:** [docs.spring.io/spring-boot](https://docs.spring.io/spring-boot/)
 - **Issues with this project:** open an issue on the repository.
 
-## Maintainers & contributing
-
-Maintained by **Andrei** ([@andreimorokov](https://github.com/andreimorokov)). Contributions and bug reports are welcome — please open an issue or PR.
-
-## License
-
-Not yet specified. Add a `LICENSE` file before publishing externally.
