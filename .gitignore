@@ -6,6 +6,12 @@ src/main/resources/application-*.properties
 src/main/resources/gtfs/
 src/main/resources/gtfs/**
 
+# Local Docker bind-mount target for the GTFS volume; ~500 MB of CSVs.
+.local-gtfs/
+
+# Claude session notes
+handoff.md
+
 # Gradle
 .gradle/
 build/

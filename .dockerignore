@@ -1,0 +1,24 @@
+# Build outputs
+.gradle
+build
+
+# Bundled GTFS static data (~500 MB). GtfsBootstrap downloads + extracts
+# this into /data/gtfs on first boot, so we keep it out of the image.
+src/main/resources/gtfs
+
+# Local-only Spring profile config. Holds the dev API key + ntfy URL.
+# Production gets these via env vars (`fly secrets set ...`), so this file
+# must never enter the image.
+src/main/resources/application-*.yml
+
+# Git, IDE, OS metadata
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+.DS_Store
+
+# Project meta files - not needed at runtime
+handoff.md
+HELP.md

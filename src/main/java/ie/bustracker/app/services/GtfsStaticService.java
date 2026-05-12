@@ -3,12 +3,13 @@ package ie.bustracker.app.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -17,24 +18,15 @@ import java.util.*;
 import ie.bustracker.app.models.UpcomingBus;
 
 @Service
+@DependsOn("gtfsBootstrap")
 public class GtfsStaticService {
     private static final Logger log = LoggerFactory.getLogger(GtfsStaticService.class);
 
-    //*  Files with data *//
-    @Value("classpath:gtfs/stop_times.txt")
-    private Resource stopTimesResource;
+    //*  GTFS data directory (filesystem; populated by bootstrap at runtime) *//
+    @Value("${bus-tracker.gtfs.dir}")
+    private String gtfsDirStr;
 
-    @Value("classpath:gtfs/trips.txt")
-    private Resource tripsResource;
-
-    @Value("classpath:gtfs/routes.txt")
-    private Resource routesResource;
-
-    @Value("classpath:gtfs/calendar.txt")
-    private Resource calendarResource;
-
-    @Value("classpath:gtfs/calendar_dates.txt")
-    private Resource calendarDatesResource;
+    private Path gtfsDir;
 
     // My bus stop 
     @Value("${bus-tracker.stop-id}")
@@ -60,6 +52,8 @@ public class GtfsStaticService {
     // Populate hashmaps with data
     @PostConstruct
     public void load() throws Exception {
+        gtfsDir = Path.of(gtfsDirStr);
+        log.info("Loading GTFS static data from {}", gtfsDir.toAbsolutePath());
         loadRoutes();
         loadTrips();
         loadStopTimes();
@@ -69,8 +63,7 @@ public class GtfsStaticService {
     }
 
     private void loadStopTimes() throws Exception {
-        // getInputStream reads raw bytes, InputStreamReader turns bytes into characters, BufferedReader - file handler
-        try (var reader = new BufferedReader(new InputStreamReader(stopTimesResource.getInputStream()))) {
+        try (BufferedReader reader = Files.newBufferedReader(gtfsDir.resolve("stop_times.txt"))) {
             reader.readLine(); // skip line
             String line; 
             while ((line = reader.readLine()) != null) {
@@ -88,7 +81,7 @@ public class GtfsStaticService {
     }
 
     private void loadTrips() throws Exception {
-        try (var reader = new BufferedReader(new InputStreamReader(tripsResource.getInputStream()))) {
+        try (BufferedReader reader = Files.newBufferedReader(gtfsDir.resolve("trips.txt"))) {
             reader.readLine(); // skip header
             String line;
             while ((line = reader.readLine()) != null) {
@@ -100,7 +93,7 @@ public class GtfsStaticService {
     }
 
     private void loadRoutes() throws Exception {
-        try (var reader = new BufferedReader(new InputStreamReader(routesResource.getInputStream()))) {
+        try (BufferedReader reader = Files.newBufferedReader(gtfsDir.resolve("routes.txt"))) {
             reader.readLine(); // skip header
             String line;
             while ((line = reader.readLine()) != null) {
@@ -111,7 +104,7 @@ public class GtfsStaticService {
     }
 
     private void loadCalendar() throws Exception {
-        try (var reader = new BufferedReader(new InputStreamReader(calendarResource.getInputStream()))) {
+        try (BufferedReader reader = Files.newBufferedReader(gtfsDir.resolve("calendar.txt"))) {
             reader.readLine();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -122,7 +115,7 @@ public class GtfsStaticService {
     }
 
     private void loadCalendarDates() throws Exception {
-        try (var reader = new BufferedReader(new InputStreamReader(calendarDatesResource.getInputStream()))) {
+        try (BufferedReader reader = Files.newBufferedReader(gtfsDir.resolve("calendar_dates.txt"))) {
             reader.readLine();
             String line;
             while ((line = reader.readLine()) != null) {

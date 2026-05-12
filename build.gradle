@@ -28,3 +28,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Local dev convenience: `./gradlew bootRun` loads application-local.yml so
+// secrets (api-key, ntfy-url) come from there. The packaged jar (used in
+// Docker / Fly) does NOT activate this profile, so production must supply
+// TFI_API_KEY and NTFY_URL via env vars.
+tasks.named('bootRun') {
+	systemProperty 'spring.profiles.active', 'local'
+}
