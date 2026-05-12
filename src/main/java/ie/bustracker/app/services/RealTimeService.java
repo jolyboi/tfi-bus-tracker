@@ -11,6 +11,7 @@ import java.util.*;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 import ie.bustracker.app.models.UpcomingBus;
 
@@ -85,7 +86,8 @@ public class RealTimeService {
                             long timestamp = stopUpdate.getArrival().getTime();
                             LocalTime arrivalTime = Instant.ofEpochSecond(timestamp)
                                                         .atZone(ZoneId.of("Europe/Dublin"))
-                                                        .toLocalTime();
+                                                        .toLocalTime()
+                                                        .truncatedTo((ChronoUnit.MINUTES)); 
                             
                             String routeId = entity.getTripUpdate().getTrip().getRouteId(); // e.g. "2 220 c b"
                             String routeName = gtfs.getRoutes().getOrDefault(routeId, routeId);
@@ -128,11 +130,14 @@ public class RealTimeService {
                 LocalTime busActualTime = null;
                 if (delays.containsKey(busTripId)) {
                     int delay = delays.get(busTripId);
-                    busActualTime = bus.getScheduledTime().plusSeconds(delay);
+                    busActualTime = bus.getScheduledTime().plusSeconds(delay).truncatedTo(ChronoUnit.MINUTES);
                 }
                 else if (realTimes.containsKey(busTripId)) {
                     Long timestamp = realTimes.get(busTripId);
-                    busActualTime = Instant.ofEpochSecond(timestamp).atZone(ZoneId.of("Europe/Dublin")).toLocalTime();
+                    busActualTime = Instant.ofEpochSecond(timestamp)
+                                        .atZone(ZoneId.of("Europe/Dublin"))
+                                        .toLocalTime()
+                                        .truncatedTo((ChronoUnit.MINUTES));
                 }
                 bus.setActualTime(busActualTime);
             }
