@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import ie.bustracker.app.models.UpcomingBus;
@@ -73,7 +74,7 @@ public class GtfsStaticService {
                     String tripId = cols[0]; 
                     String timeStr = cols[1];
                      if (Integer.parseInt(timeStr.split(":")[0]) < 24) {
-                        stopTimes.put(tripId, LocalTime.parse(timeStr));
+                        stopTimes.put(tripId, LocalTime.parse(timeStr).truncatedTo(ChronoUnit.MINUTES));
                     }
                 }
             }
