@@ -1,5 +1,7 @@
 package ie.bustracker.app.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,10 @@ import java.util.*;
 
 import ie.bustracker.app.models.UpcomingBus;
 
-@Service 
+@Service
 public class GtfsStaticService {
+    private static final Logger log = LoggerFactory.getLogger(GtfsStaticService.class);
+
     //*  Files with data *//
     @Value("classpath:gtfs/stop_times.txt")
     private Resource stopTimesResource;
@@ -61,7 +65,7 @@ public class GtfsStaticService {
         loadStopTimes();
         loadCalendar();
         loadCalendarDates();
-        System.out.println("GTFS loaded: " + stopTimes.size() + " trips at stop " + stopId);
+        log.info("GTFS loaded: {} trips at stop {}", stopTimes.size(), stopId);
     }
 
     private void loadStopTimes() throws Exception {

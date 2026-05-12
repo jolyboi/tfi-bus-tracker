@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -18,6 +20,7 @@ import ie.bustracker.app.models.UpcomingBus;
 
 @Service
 public class NotificationService {
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationProperties props;
     private final RestClient restClient = RestClient.builder().build(); 
@@ -77,7 +80,7 @@ public class NotificationService {
                     .toBodilessEntity();
             return true;
         } catch (Exception e) {
-            System.out.println("ntfy send failed: " + e.getMessage());  // temp, should be SLF4J
+            log.warn("ntfy send failed for route {}", bus.getRouteName(), e);
             return false;
         }
     }

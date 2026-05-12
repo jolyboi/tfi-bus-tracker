@@ -1,5 +1,7 @@
 package ie.bustracker.app.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -17,6 +19,8 @@ import ie.bustracker.app.models.UpcomingBus;
 
 @Service
 public class RealTimeService {
+    private static final Logger log = LoggerFactory.getLogger(RealTimeService.class);
+
     private final GtfsStaticService gtfs;
 
 	public RealTimeService(GtfsStaticService gtfs) {
@@ -55,7 +59,7 @@ public class RealTimeService {
                                 .body(byte[].class);
 
             FeedMessage feed = FeedMessage.parseFrom(bytes);
-            System.out.println("Realtime API accessed successfully."); 
+            log.debug("Realtime API call succeeded");
 
             // tripId -> delay
             Map<String, Integer> delays = new HashMap<>();
@@ -117,15 +121,10 @@ public class RealTimeService {
                 }
             }
 
-            System.out.println("Delays found: " + delays.size() + " " + delays.keySet());
-            System.out.println("Real times found: " + realTimes.size() + " " + realTimes.keySet());
-
+            log.debug("Realtime feed processed: {} delays, {} realtimes", delays.size(), realTimes.size());
 
             // Add actual time to each bus if applicable
             for (UpcomingBus bus : nextBuses) {
-
-                System.out.println("Scheduled bus id - " + bus.getTripId()); 
-
                 String busTripId = bus.getTripId();
                 LocalTime busActualTime = null;
                 if (delays.containsKey(busTripId)) {
@@ -148,7 +147,7 @@ public class RealTimeService {
 
 
         } catch (Exception e) {
-            System.out.println("Realtime API failed, returning static schedule: " + e.getMessage());
+            log.warn("Realtime API failed, returning static schedule", e);
         }
         
 
