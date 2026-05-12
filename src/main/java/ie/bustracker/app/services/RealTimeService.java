@@ -95,7 +95,7 @@ public class RealTimeService {
                             String entityId = entity.getId(); 
                             realTimes.put(entityId, timestamp); 
                             
-                            UpcomingBus addedBus = new UpcomingBus(null, routeName, null);
+                            UpcomingBus addedBus = new UpcomingBus(entityId, routeName, null);
                             addedBus.setActualTime(arrivalTime);
                             addedBuses.add(addedBus);
                         } 
