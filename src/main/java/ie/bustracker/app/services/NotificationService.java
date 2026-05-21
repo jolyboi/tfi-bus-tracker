@@ -2,6 +2,7 @@ package ie.bustracker.app.services;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +36,7 @@ public class NotificationService {
         // If notificaitons or url not set
         if (!props.enabled() || props.ntfyUrl() == null || props.ntfyUrl().isBlank()) return; 
 
-        LocalTime now = LocalTime.now(ZoneId.of("Europe/Dublin"));
+        LocalTime now = LocalTime.now(ZoneId.of("Europe/Dublin")).truncatedTo(ChronoUnit.MINUTES);
 
         for (UpcomingBus bus : buses) {
             if (bus.getTripId() == null) continue;
